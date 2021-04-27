@@ -14,8 +14,8 @@ const tap = require('./lib/tapfiliate');
 
 (async function settleBalances() {
   try {
-    const balances = await tap.getBalances()
-    const ids = balances.map(entry => entry.affiliate_id );
+    const balances = await tap.getBalances();
+    const ids = balances.map((entry) => entry.affiliate_id);
     const methods = await tap.getPayoutMethods(ids);
     console.log(methods);
     console.log(balances);
@@ -23,4 +23,3 @@ const tap = require('./lib/tapfiliate');
     console.log(err);
   }
 })();
-
