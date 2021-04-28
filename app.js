@@ -10,16 +10,23 @@
 'use strict';
 
 require('dotenv').config();
+
 const tap = require('./lib/tapfiliate');
+const payPal = require('./lib/paypal');
 
 (async function settleBalances() {
   try {
-    const balances = await tap.getBalances();
-    const ids = balances.map((entry) => entry.affiliate_id);
-    const methods = await tap.getPayoutMethods(ids);
-    console.log(methods);
-    console.log(balances);
+    // const balances = await tap.getBalances();
+    // // const methods = await tap.getPayoutMethods(balances);
+    // const methods = [{
+    // 	affiliate_id: 'iantest',
+    // 	balance: 0.01,
+    // 	email: 'blah@blah.com'
+    // }];
+    // // console.log(balances);
+    // const paid = await tap.postPayments(methods);
+    // console.log(paid);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 })();
