@@ -1,37 +1,54 @@
-## Welcome to GitHub Pages
+# Slapfiliate
 
-You can use the [editor on GitHub](https://github.com/iangoodnight/slapfiliate/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Slapfiliate is a lightweight application designed to handle Tapfiliate payouts
+via PayPal.  To keep the footprint small, it was built without scheduling
+capabilities and is meant to be run via cronjob or task scheduler.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## What it does
 
-### Markdown
+Running the application will:
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+- Query tapfiliate for outstanding affiliate balances
+- If a pay floor is established, filter out affiliates with balances less than
+  the pay floor
+- Retrieve payout methods for each affiliate with a balance (currently only
+  supports PayPal)
+- If the number of potential payouts exceeds 15,000 (PayPal's batch payment
+  limit), prioritize the highest balances and discard the
+  remainder
+- Post a batch payment to PayPal
+- Post payment information back to Tapfiliate
 
-```markdown
-Syntax highlighted code block
+## How it works
 
-# Header 1
-## Header 2
-### Header 3
+Slapfiliate is paranoid and will fail as early as possible (prior to posting
+batch payments) instead of half-completing jobs.  If the environment is not set
+to production (`NODE_ENV=production`), slapfiliate will inject sandbox accounts
+to prevent actual payouts from being created in PayPal (though, these balances
+will still be posted to Tapfiliate).  With no `NODE_ENV` set, slapfiliate will
+default to `development`.
 
-- Bulleted
-- List
+## Setup
 
-1. Numbered
-2. List
+1. First install nodejs with `sudo apt install nodejs` on Debian-based systems
+   (alternatively, check out https://nodejs.org/en/download/ for other
+   installation options).
+2. Pull the repository down to your local machine by cloning the repository.
+  - By [installing git](https://github.com/git-guides/install-git) and running:
+    `cd /opt/ && git clone https://github.com/iangoodnight/slapfiliate.git`
+  - Or using cUrl with:
+    `curl -L https://github.com/iangoodnight/slapfiliate/archive/master.zip > \
+    slapfiliate.tar.gz && tar -zxvf slapfiliate.tar.gz`
+3. Install dependencies with `cd slapfiliate/ && npm install` for the entire
+   package, or with `cd slapfiliate/ && npm install --production` to install the
+   package without development dependencies.
+4. Set your secret keys using `.env.example` and filling in the missing values.
+5. Rename `.env.example` with `mv .env.example .env`.
+6. If you have installed the entire package (with devDependencies) you can test
+   your installation with `npm test`.
+7. If everything looks right, you can run the application with `npm start`.
+8. Logs will be mailed to the email address provided in the `.env` file.
 
-**Bold** and _Italic_ and `Code` text
+## Coming soon
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/iangoodnight/slapfiliate/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Cronjob setup.
