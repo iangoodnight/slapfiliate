@@ -33,4 +33,22 @@ default to `development`.
 1. First install nodejs with `sudo apt install nodejs` on Debian-based systems
    (alternatively, check out https://nodejs.org/en/download/ for other
    installation options).
-2. <to be continued>
+2. Pull the repository down to your local machine by cloning the repository.
+  - By [installing git](https://github.com/git-guides/install-git) and running:
+    `cd /opt/ && git clone https://github.com/iangoodnight/slapfiliate.git`
+  - Or using cUrl with:
+    `curl -L https://github.com/iangoodnight/slapfiliate/archive/master.zip > \
+    slapfiliate.tar.gz && tar -zxvf slapfiliate.tar.gz`
+3. Install dependencies with `cd slapfiliate/ && npm install` for the entire
+   package, or with `cd slapfiliate/ && npm install --production` to install the
+   package without development dependencies.
+4. Set your secret keys using `.env.example` and filling in the missing values.
+5. Rename `.env.example` with `mv .env.example .env`.
+6. If you have installed the entire package (with devDependencies) you can test
+   your installation with `npm test`.
+7. If everything looks right, you can run the application with `npm start`.
+8. Logs will be mailed to the email address provided in the `.env` file.
+
+## Coming soon
+
+Cronjob setup.
