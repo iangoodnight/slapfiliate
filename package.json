@@ -1,6 +1,6 @@
 {
   "name": "slapfiliate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "Handles payouts for bulk tapfiliates",
   "main": "index.js",
