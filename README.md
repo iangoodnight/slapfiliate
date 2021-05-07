@@ -49,6 +49,29 @@ default to `development`.
 7. If everything looks right, you can run the application with `npm start`.
 8. Logs will be mailed to the email address provided in the `.env` file.
 
-## Coming soon
+## Creating a cronjob
 
-Cronjob setup.
+1. Grant the 'execute' permission to the root of slapfiliate:
+  `sudo chmod +x /opt/slapfiliate/index.js`
+2. Setup your crontab with the command:
+  `crontab -e`
+3. Crontab uses the syntax `m h dom mon dow command` referring to `minute`,
+   `hour`, `day of month`, `month`, and `day of week` respectively with `*`
+   actiing as a wildcard for 'any'.  Occasionally, the relative paths called
+   from node programs don't play nice with cronjobs, so we are going to start
+   our <command> by changing directories to the root of slapfiliate.  So, if we
+   wanted to run our script once a week our crontab entry might look like:
+   `0 5 * * 1 cd /opt/slapfiliate/ && NODE_ENV=production ./index.js`
+
+In the example above, we are setting the `NODE_ENV` directly as part of the
+command itself.  The `NODE_ENV` can be set throught the `.env` file as well, but
+in any cases where it is not set, slapfiliate will default to `development`.
+Especially in testing, it is best practice to leave this environmental variable
+set to `development` and to explicitly override it when calling the script.
+This helps to keep erroneous payments from going out during setup or
+troubleshooting.  By default, the output from cronjobs goes to `/var/mail/`, but
+you can override this by redirecting the output as part of the command. So the
+crontab entry:
+`0 5 * * 1 cd /opt/slapfiliate/ && NODE_ENV=production ./index.js > ./run.log`
+Runs the program in the `production` environment, and saves the output from that
+last job to the file `/opt/slapfiliate/run.log` for review.

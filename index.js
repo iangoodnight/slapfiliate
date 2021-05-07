@@ -17,8 +17,10 @@ const {
   tapfiliate: { getBalances, getPayoutMethods, postPayments },
   utils: {
     applyPayFloor,
+    checkAndBail,
     colorConsole: code,
     injectSandBoxAffiliates,
+    isMail,
     prioritizePayments,
   },
 } = require('./lib');
@@ -32,7 +34,8 @@ const {
   console.time(label);
   console.log(date);
   console.log(code.green, start);
-  getBalances() // fetch affiliate balances
+  checkAndBail() // check for required environment variables
+    .then(getBalances) // fetch affiliate balances
     .then(applyPayFloor) // if pay floor is set, filter out balances below floor
     .then(getPayoutMethods) // fetch payout methods for affiliates
     .then(injectSandBoxAffiliates) // if not production, inject sandbox
@@ -46,20 +49,24 @@ const {
         console.log(code.yellow, entry);
       });
       results.push('PAYMENT SUCCESSFUL');
-      const resultMessage = results.join('\n');
-      const message = new Message(resultMessage);
-      mg.messages
-        .create(process.env.MAILGUN_DOMAIN, message)
-        .catch((error) => console.log(error));
+      if (isMail()) {
+        const resultMessage = results.join('\n');
+        const message = new Message(resultMessage);
+        mg.messages
+          .create(process.env.MAILGUN_DOMAIN, message)
+          .catch((error) => console.log(error));
+      }
       console.timeEnd(label);
     })
     .catch((err) => {
       results.push('PAYMENT FAILURE', err);
-      const errorMessage = results.join('\n');
-      const message = new Message(errorMessage, 'fail');
-      mg.messages
-        .create(process.env.MAILGUN_DOMAIN, message)
-        .catch((error) => console.log(error));
+      if (isMail()) {
+        const errorMessage = results.join('\n');
+        const message = new Message(errorMessage, 'fail');
+        mg.messages
+          .create(process.env.MAILGUN_DOMAIN, message)
+          .catch((error) => console.log(error));
+      }
       console.error(code.red, err);
       console.timeEnd(label);
     });

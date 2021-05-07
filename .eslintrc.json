@@ -22,10 +22,6 @@
       "error",
       "unix"
     ],
-    "indent": [
-      "error",
-      2
-    ],
     "no-unused-vars": [
       2,
       {
